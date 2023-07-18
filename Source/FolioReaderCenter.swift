@@ -1339,6 +1339,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         pageController.viewControllerTwo = highlight
         pageController.segmentedControlItems = [readerConfig.localizedContentsTitle, readerConfig.localizedHighlightsTitle]
 
+        pageController.modalPresentationStyle = .fullScreen
         let nav = UINavigationController(rootViewController: pageController)
         present(nav, animated: true, completion: nil)
     }
@@ -1362,7 +1363,6 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         animator.direction = ZFModalTransitonDirection.bottom
 
         menu.transitioningDelegate = animator
-        menu.modalPresentationStyle = .fullScreen
         self.present(menu, animated: true, completion: nil)
     }
 
