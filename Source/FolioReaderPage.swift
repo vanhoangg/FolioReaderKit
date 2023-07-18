@@ -302,6 +302,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         } else if url.absoluteString != "about:blank" && scheme.contains("http") && navigationType == .linkClicked {
             let safariVC = SFSafariViewController(url: request.url!)
             safariVC.view.tintColor = self.readerConfig.tintColor
+            safariVC.modalPresentationStyle = .fullScreen
             self.folioReader.readerCenter?.present(safariVC, animated: true, completion: nil)
             return false
         } else {
