@@ -181,10 +181,10 @@ open class FolioReaderConfig: NSObject {
     // MARK: Localized strings
 
     /// Localizes Highlight title
-    open var localizedHighlightsTitle = NSLocalizedString("Highlights", comment: "")
+    open var localizedHighlightsTitle = NSLocalizedString("Đánh dấu", comment: "")
 
     /// Localizes Content title
-    open var localizedContentsTitle = NSLocalizedString("Contents", comment: "")
+    open var localizedContentsTitle = NSLocalizedString("Nội dung", comment: "")
 
     /// Use the readers `UIMenuController` which enables the highlighting etc. The default is `true`. If set to false it's possible to modify the shared `UIMenuController` for yourself. Note: This doesn't disable the text selection in the web view.
     open var useReaderMenuController = true
@@ -194,33 +194,33 @@ open class FolioReaderConfig: NSObject {
 
     /// Localizes Highlight date format. This is a `dateFormat` from `NSDateFormatter`, so be careful 🤔
     open var localizedHighlightsDateFormat = "MMM dd, YYYY | HH:mm"
-    open var localizedHighlightMenu = NSLocalizedString("Highlight", comment: "")
-    open var localizedDefineMenu = NSLocalizedString("Define", comment: "")
-    open var localizedPlayMenu = NSLocalizedString("Play", comment: "")
-    open var localizedPauseMenu = NSLocalizedString("Pause", comment: "")
-    open var localizedFontMenuNight = NSLocalizedString("Night", comment: "")
-    open var localizedPlayerMenuStyle = NSLocalizedString("Style", comment: "")
-    open var localizedFontMenuDay = NSLocalizedString("Day", comment: "")
-    open var localizedLayoutHorizontal = NSLocalizedString("Horizontal", comment: "")
-    open var localizedLayoutVertical = NSLocalizedString("Vertical", comment: "")
-    open var localizedReaderOnePageLeft = NSLocalizedString("1 page left", comment: "")
-    open var localizedReaderManyPagesLeft = NSLocalizedString("pages left", comment: "")
-    open var localizedReaderManyMinutes = NSLocalizedString("minutes", comment: "")
-    open var localizedReaderOneMinute = NSLocalizedString("1 minute", comment: "")
-    open var localizedReaderLessThanOneMinute = NSLocalizedString("Less than a minute", comment: "")
+    open var localizedHighlightMenu = NSLocalizedString("Đánh dấu", comment: "")
+    open var localizedDefineMenu = NSLocalizedString("Định nghĩa", comment: "")
+    open var localizedPlayMenu = NSLocalizedString("Chạy", comment: "")
+    open var localizedPauseMenu = NSLocalizedString("Dừng", comment: "")
+    open var localizedFontMenuNight = NSLocalizedString("Bóng tối", comment: "")
+    open var localizedPlayerMenuStyle = NSLocalizedString("Kiểu", comment: "")
+    open var localizedFontMenuDay = NSLocalizedString("Ngày", comment: "")
+    open var localizedLayoutHorizontal = NSLocalizedString("Ngang", comment: "")
+    open var localizedLayoutVertical = NSLocalizedString("Dọc", comment: "")
+    open var localizedReaderOnePageLeft = NSLocalizedString("1 trang còn lại", comment: "")
+    open var localizedReaderManyPagesLeft = NSLocalizedString("trang còn lại", comment: "")
+    open var localizedReaderManyMinutes = NSLocalizedString("phút", comment: "")
+    open var localizedReaderOneMinute = NSLocalizedString("1 phút", comment: "")
+    open var localizedReaderLessThanOneMinute = NSLocalizedString("Ít hơn một phút", comment: "")
     open var localizedShareWebLink: URL? = nil
-    open var localizedShareChapterSubject = NSLocalizedString("Check out this chapter from", comment: "")
-    open var localizedShareHighlightSubject = NSLocalizedString("Notes from", comment: "")
-    open var localizedShareAllExcerptsFrom = NSLocalizedString("All excerpts from", comment: "")
-    open var localizedShareBy = NSLocalizedString("by", comment: "")
-    open var localizedCancel = NSLocalizedString("Cancel", comment: "")
-    open var localizedShare = NSLocalizedString("Share", comment: "")
-    open var localizedChooseExisting = NSLocalizedString("Choose existing", comment: "")
-    open var localizedTakePhoto = NSLocalizedString("Take Photo", comment: "")
-    open var localizedShareImageQuote = NSLocalizedString("Share image quote", comment: "")
-    open var localizedShareTextQuote = NSLocalizedString("Share text quote", comment: "")
-    open var localizedSave = NSLocalizedString("Save", comment: "")
-    open var localizedHighlightNote = NSLocalizedString("Note", comment: "")
+    open var localizedShareChapterSubject = NSLocalizedString("Kiểm tra chương này từ", comment: "")
+    open var localizedShareHighlightSubject = NSLocalizedString("Ghi chú từ", comment: "")
+    open var localizedShareAllExcerptsFrom = NSLocalizedString("Tất cả các đoạn trích từ", comment: "")
+    open var localizedShareBy = NSLocalizedString("bởi", comment: "")
+    open var localizedCancel = NSLocalizedString("Huỷ", comment: "")
+    open var localizedShare = NSLocalizedString("Chia sẻ", comment: "")
+    open var localizedChooseExisting = NSLocalizedString("Chọn những cái có sẵn", comment: "")
+    open var localizedTakePhoto = NSLocalizedString("Chọn ảnh", comment: "")
+    open var localizedShareImageQuote = NSLocalizedString("Chia sẻ trích dẫn hình ảnh", comment: "")
+    open var localizedShareTextQuote = NSLocalizedString("Chia sẻ trích dẫn chữ", comment: "")
+    open var localizedSave = NSLocalizedString("Lưu", comment: "")
+    open var localizedHighlightNote = NSLocalizedString("Ghi chú", comment: "")
 
     public convenience init(withIdentifier identifier: String) {
         self.init()
