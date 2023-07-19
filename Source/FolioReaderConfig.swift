@@ -198,7 +198,7 @@ open class FolioReaderConfig: NSObject {
     open var localizedDefineMenu = NSLocalizedString("Định nghĩa", comment: "")
     open var localizedPlayMenu = NSLocalizedString("Chạy", comment: "")
     open var localizedPauseMenu = NSLocalizedString("Dừng", comment: "")
-    open var localizedFontMenuNight = NSLocalizedString("Bóng tối", comment: "")
+    open var localizedFontMenuNight = NSLocalizedString("Đêm", comment: "")
     open var localizedPlayerMenuStyle = NSLocalizedString("Kiểu", comment: "")
     open var localizedFontMenuDay = NSLocalizedString("Ngày", comment: "")
     open var localizedLayoutHorizontal = NSLocalizedString("Ngang", comment: "")
