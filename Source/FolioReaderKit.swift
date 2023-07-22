@@ -18,7 +18,7 @@ internal let kCurrentAudioRate = "com.folioreader.kCurrentAudioRate"
 internal let kCurrentHighlightStyle = "com.folioreader.kCurrentHighlightStyle"
 internal let kCurrentMediaOverlayStyle = "com.folioreader.kMediaOverlayStyle"
 internal let kCurrentScrollDirection = "com.folioreader.kCurrentScrollDirection"
-internal let kNightMode = "com.folioreader.kNightMode"
+internal let kReadMode = "com.folioreader.kReadMode"
 internal let kCurrentTOCMenu = "com.folioreader.kCurrentTOCMenu"
 internal let kHighlightRange = 30
 internal let kReuseCellIdentifier = "com.folioreader.Cell.ReuseIdentifier"
@@ -124,8 +124,8 @@ open class FolioReader: NSObject {
         return (self.readerContainer?.book.spine.isRtl == true && self.readerContainer?.readerConfig.scrollDirection == .horizontal)
     }
 
-    func isNight<T>(_ f: T, _ l: T) -> T {
-        return (self.nightMode == true ? f : l)
+    func isNight<T>(_ f: T, _ l: T , _ y: T) -> T {
+        return (self.readMode == 1 ? f : self.readMode == 0 ? l : y)
     }
 
     /// UserDefault for the current ePub file.
@@ -179,18 +179,19 @@ extension FolioReader {
     }
 
     /// Check if current theme is Night mode
-    open var nightMode: Bool {
-        get { return self.defaults.bool(forKey: kNightMode) }
+    open var readMode: Int {
+        get { return self.defaults.integer(forKey: kReadMode) }
         set (value) {
-            self.defaults.set(value, forKey: kNightMode)
+            self.defaults.set(value, forKey: kReadMode)
 
             if let readerCenter = self.readerCenter {
                 UIView.animate(withDuration: 0.6, animations: {
-                    _ = readerCenter.currentPage?.webView?.js("nightMode(\(self.nightMode))")
+                    _ = readerCenter.currentPage?.webView?.js("readMode(\(self.readMode))")
                     readerCenter.pageIndicatorView?.reloadColors()
                     readerCenter.configureNavBar()
                     readerCenter.scrollScrubber?.reloadColors()
-                    readerCenter.collectionView.backgroundColor = (self.nightMode == true ? self.readerContainer?.readerConfig.nightModeBackground : UIColor.white)
+                    readerCenter.collectionView.backgroundColor = (self.readMode == 1 ? self.readerContainer?.readerConfig.nightModeBackground :
+                                                                    self.readMode == 0 ? UIColor.white : UIColor(rgba: "#f2e2c9"))
                 }, completion: { (finished: Bool) in
                     NotificationCenter.default.post(name: Notification.Name(rawValue: "needRefreshPageMode"), object: nil)
                 })

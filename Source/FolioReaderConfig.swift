@@ -112,6 +112,9 @@ open class FolioReaderConfig: NSObject {
     /// Menu text color
     open var menuTextColorSelected = UIColor(rgba: "#6ACC50")
     
+    // Golde mode nav color
+    open var goldModeNavBackground = UIColor(rgba: "#f2e2c9")
+    
     // Day mode nav color
     open var daysModeNavBackground = UIColor.white
     
@@ -120,12 +123,21 @@ open class FolioReaderConfig: NSObject {
     
     /// Night mode background color
     open var nightModeBackground = UIColor(rgba: "#131313")
+    
+    /// Gold mode background color
+    open var goldModeBackground = UIColor(rgba: "#f2e2c9")
 
     /// Night mode menu background color
     open var nightModeMenuBackground = UIColor(rgba: "#1E1E1E")
+    
+    /// Gold mode menu background Color
+    open var goldModeMenuBackground = UIColor(rgba: "#f3f1ed")
 
     /// Night mode separator color
     open var nightModeSeparatorColor = UIColor(white: 0.5, alpha: 0.2)
+    
+    /// Gold mode separator color
+    open var goldModeSeparatorColor = UIColor(rgba: "#D7D7D7")
 
     /// Media overlay or TTS selection color
     open lazy var mediaOverlayColor: UIColor! = self.tintColor
@@ -199,6 +211,7 @@ open class FolioReaderConfig: NSObject {
     open var localizedPlayMenu = NSLocalizedString("Chạy", comment: "")
     open var localizedPauseMenu = NSLocalizedString("Dừng", comment: "")
     open var localizedFontMenuNight = NSLocalizedString("Đêm", comment: "")
+    open var localizedFontMenuSunset = NSLocalizedString("Hoàng hôn", comment: "")
     open var localizedPlayerMenuStyle = NSLocalizedString("Kiểu", comment: "")
     open var localizedFontMenuDay = NSLocalizedString("Ngày", comment: "")
     open var localizedLayoutHorizontal = NSLocalizedString("Ngang", comment: "")
