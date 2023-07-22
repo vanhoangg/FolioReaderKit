@@ -26,7 +26,7 @@ class FolioReaderPageIndicator: UIView {
 
         super.init(frame: frame)
 
-        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
+        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
         backgroundColor = color
         layer.shadowColor = color.cgColor
         layer.shadowOffset = CGSize(width: 0, height: -6)
@@ -67,7 +67,7 @@ class FolioReaderPageIndicator: UIView {
     }
 
     func reloadColors() {
-        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
+        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
         backgroundColor = color
 
         // Animate the shadow color change
@@ -112,7 +112,7 @@ extension FolioReaderPageIndicator: CAAnimationDelegate {
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         // Set the shadow color to the final value of the animation is done
         if let keyPath = anim.value(forKeyPath: "keyPath") as? String , keyPath == "shadowColor" {
-            let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
+            let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
             layer.shadowColor = color.cgColor
         }
     }

@@ -101,10 +101,10 @@ open class FolioReaderConfig: NSObject {
     open var tintColor = UIColor(rgba: "#6ACC50")
 
     /// Menu background color
-    open var menuBackgroundColor = UIColor.white
+    open var menuBackgroundColor = UIColor(rgba: "#f2e2c9")
 
     /// Menu separator Color
-    open var menuSeparatorColor = UIColor(rgba: "#D7D7D7")
+    open var menuSeparatorColor = UIColor(rgba: "#f0dab8")
 
     /// Menu text color
     open var menuTextColor = UIColor(rgba: "#767676")
@@ -113,13 +113,19 @@ open class FolioReaderConfig: NSObject {
     open var menuTextColorSelected = UIColor(rgba: "#6ACC50")
     
     // Day mode nav color
-    open var daysModeNavBackground = UIColor.white
+    open var daysModeNavBackground = UIColor(rgba: "#f2e2c9")
     
     // Day mode nav color
     open var nightModeNavBackground = UIColor(rgba: "#131313")
     
     /// Night mode background color
+    open var dayModeBackground = UIColor(rgba: "#f2e2c9")
+    
+    /// Night mode background color
     open var nightModeBackground = UIColor(rgba: "#131313")
+    
+    /// Day mode menu background color
+    open var dayModeMenuBackground = UIColor(rgba: "#f0dab8")
 
     /// Night mode menu background color
     open var nightModeMenuBackground = UIColor(rgba: "#1E1E1E")

@@ -141,7 +141,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         collectionViewLayout.minimumInteritemSpacing = 0
         collectionViewLayout.scrollDirection = .direction(withConfiguration: self.readerConfig)
         
-        let background = folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
+        let background = folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
         view.backgroundColor = background
 
         // CollectionView

@@ -37,7 +37,7 @@ class PageViewController: UIPageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.view.backgroundColor = UIColor.white
+        navigationController?.view.backgroundColor = folioReader.isNight(self.readerConfig.nightModeNavBackground, self.readerConfig.daysModeNavBackground)
         segmentedControl = UISegmentedControl(items: segmentedControlItems)
         segmentedControl.addTarget(self, action: #selector(PageViewController.didSwitchMenu(_:)), for: UIControl.Event.valueChanged)
         segmentedControl.selectedSegmentIndex = index

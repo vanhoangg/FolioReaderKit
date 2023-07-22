@@ -61,9 +61,11 @@ function setFontName(cls) {
 function nightMode(enable) {
     var elm = document.documentElement;
     if(enable) {
+        removeClass(elm, "goldMode");
         addClass(elm, "nightMode");
     } else {
         removeClass(elm, "nightMode");
+        addClass(elm, "goldMode");
     }
 }
 
