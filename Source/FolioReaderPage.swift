@@ -35,7 +35,7 @@ import MenuItemKit
     @objc optional func pageTap(_ recognizer: UITapGestureRecognizer)
 }
 
-open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecognizerDelegate {
+open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecognizerDelegate, CAAnimationDelegate {
     weak var delegate: FolioReaderPageDelegate?
     weak var readerContainer: FolioReaderContainer?
 
@@ -102,6 +102,43 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         tapGestureRecognizer.numberOfTapsRequired = 1
         tapGestureRecognizer.delegate = self
         webView?.addGestureRecognizer(tapGestureRecognizer)
+        
+        let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeLeftGesture.delegate = self
+        swipeRightGesture.delegate = self
+        swipeRightGesture.direction = UISwipeGestureRecognizer.Direction.right
+        swipeLeftGesture.direction = UISwipeGestureRecognizer.Direction.left
+        webView?.addGestureRecognizer(swipeRightGesture)
+        webView?.addGestureRecognizer(swipeLeftGesture)
+    }
+    
+    @objc open func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.direction == UISwipeGestureRecognizer.Direction.right {
+            swipeRight()
+        } else if gesture.direction == UISwipeGestureRecognizer.Direction.left {
+            swipeLeft()
+        }
+    }
+    
+    func swipeLeft() {
+        let animation:CATransition = CATransition()
+        animation.delegate = self
+        animation.type = CATransitionType.reveal
+        animation.subtype = CATransitionSubtype.fromRight
+        animation.duration = 1.0
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        webView?.layer.add(animation, forKey: kCATransition)
+    }
+    
+    func swipeRight() {
+        let animation:CATransition = CATransition()
+        animation.delegate = self
+        animation.type = CATransitionType.reveal
+        animation.subtype = CATransitionSubtype.fromLeft
+        animation.duration = 1.0
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        webView?.layer.add(animation, forKey: kCATransition)
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -510,7 +547,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     @objc func refreshPageMode() {
         guard let webView = webView else { return }
 
-        if (self.folioReader.readMode != 0) {
+        if (self.folioReader.nightMode == true) {
             // omit create webView and colorView
             let script = "document.documentElement.offsetHeight"
             let contentHeight = webView.stringByEvaluatingJavaScript(from: script)
@@ -532,7 +569,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     
     // MARK: - Public Java Script injection
     
-    /** 
+    /**
      Runs a JavaScript script and returns it result. The result of running the JavaScript script passed in the script parameter, or nil if the script fails.
      
      - returns: The result of running the JavaScript script passed in the script parameter, or nil if the script fails.

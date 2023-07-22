@@ -26,7 +26,7 @@ class FolioReaderPageIndicator: UIView {
 
         super.init(frame: frame)
 
-        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white, self.readerConfig.goldModeBackground)
+        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
         backgroundColor = color
         layer.shadowColor = color.cgColor
         layer.shadowOffset = CGSize(width: 0, height: -6)
@@ -67,7 +67,7 @@ class FolioReaderPageIndicator: UIView {
     }
 
     func reloadColors() {
-        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white, self.readerConfig.goldModeBackground)
+        let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
         backgroundColor = color
 
         // Animate the shadow color change
@@ -82,8 +82,8 @@ class FolioReaderPageIndicator: UIView {
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         layer.add(animation, forKey: "shadowColor")
 
-        minutesLabel.textColor = self.folioReader.isNight(UIColor(white: 1, alpha: 0.3), UIColor(white: 0, alpha: 0.6),UIColor(white: 0, alpha: 0.6))
-        pagesLabel.textColor = self.folioReader.isNight(UIColor(white: 1, alpha: 0.6), UIColor(white: 0, alpha: 0.9),UIColor(white: 0, alpha: 0.9))
+        minutesLabel.textColor = self.folioReader.isNight(UIColor(white: 1, alpha: 0.3), UIColor(white: 0, alpha: 0.6))
+        pagesLabel.textColor = self.folioReader.isNight(UIColor(white: 1, alpha: 0.6), UIColor(white: 0, alpha: 0.9))
     }
 
     fileprivate func reloadViewWithPage(_ page: Int) {
@@ -112,7 +112,7 @@ extension FolioReaderPageIndicator: CAAnimationDelegate {
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         // Set the shadow color to the final value of the animation is done
         if let keyPath = anim.value(forKeyPath: "keyPath") as? String , keyPath == "shadowColor" {
-            let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white, self.readerConfig.goldModeBackground)
+            let color = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
             layer.shadowColor = color.cgColor
         }
     }

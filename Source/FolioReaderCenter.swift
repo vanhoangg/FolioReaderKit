@@ -119,7 +119,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         self.totalPages = book.spine.spineReferences.count
 
         // Loading indicator
-        let style: UIActivityIndicatorView.Style = folioReader.isNight(.white, .gray , .gray)
+        let style: UIActivityIndicatorView.Style = folioReader.isNight(.white, .gray)
         loadingView = UIActivityIndicatorView(style: style)
         loadingView.hidesWhenStopped = true
         loadingView.startAnimating()
@@ -141,7 +141,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         collectionViewLayout.minimumInteritemSpacing = 0
         collectionViewLayout.scrollDirection = .direction(withConfiguration: self.readerConfig)
         
-        let background = folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white, self.readerConfig.goldModeBackground)
+        let background = folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
         view.backgroundColor = background
 
         // CollectionView
@@ -250,9 +250,9 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     }
 
     func configureNavBar() {
-        let navBackground = folioReader.isNight(self.readerConfig.nightModeNavBackground, self.readerConfig.daysModeNavBackground , self.readerConfig.goldModeNavBackground)
+        let navBackground = folioReader.isNight(self.readerConfig.nightModeNavBackground, self.readerConfig.daysModeNavBackground)
         let tintColor = readerConfig.tintColor
-        let navText = folioReader.isNight(UIColor.white, UIColor.black, UIColor.black)
+        let navText = folioReader.isNight(UIColor.white, UIColor.black)
         let font = UIFont(name: "Avenir-Light", size: 17)!
         setTranslucentNavigation(color: navBackground, tintColor: tintColor, titleColor: navText, andFont: font)
     }
@@ -482,11 +482,8 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         classes += " " + folioReader.currentMediaOverlayStyle.className()
 
         // Night mode
-        if folioReader.readMode == 1{
+        if folioReader.nightMode {
             classes += " nightMode"
-        }
-        if folioReader.readMode == 2{
-            classes += " goldMode"
         }
 
         // Font Size

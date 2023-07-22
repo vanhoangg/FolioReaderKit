@@ -73,9 +73,9 @@ class PageViewController: UIPageViewController {
     }
 
     func configureNavBar() {
-        let navBackground = self.folioReader.isNight(self.readerConfig.nightModeMenuBackground,self.readerConfig.daysModeNavBackground,self.readerConfig.goldModeNavBackground)
+        let navBackground = self.folioReader.isNight(self.readerConfig.nightModeMenuBackground,self.readerConfig.daysModeNavBackground)
         let tintColor = self.readerConfig.tintColor
-        let navText = self.folioReader.isNight(UIColor.white, UIColor.black, UIColor.black)
+        let navText = self.folioReader.isNight(UIColor.white, UIColor.black)
         let font = UIFont(name: "Avenir-Light", size: 17)!
         setTranslucentNavigation(false, color: navBackground, tintColor: tintColor, titleColor: navText, andFont: font)
     }
@@ -92,7 +92,7 @@ class PageViewController: UIPageViewController {
     // MARK: - Status Bar
 
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        return self.folioReader.isNight(.lightContent, .default, .default)
+        return self.folioReader.isNight(.lightContent, .default)
     }
 }
 

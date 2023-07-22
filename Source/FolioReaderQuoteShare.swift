@@ -158,7 +158,7 @@ class FolioReaderQuoteShare: UIViewController {
         collectionViewLayout.minimumInteritemSpacing = 0
         collectionViewLayout.scrollDirection = .horizontal
 
-        let background = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white, self.readerConfig.goldModeBackground)
+        let background = self.folioReader.isNight(self.readerConfig.nightModeBackground, UIColor.white)
         view.backgroundColor = background
 
         // CollectionView
@@ -192,9 +192,9 @@ class FolioReaderQuoteShare: UIViewController {
     }
 
     func configureNavBar() {
-        let navBackground = self.folioReader.isNight(self.readerConfig.nightModeNavBackground, self.readerConfig.daysModeNavBackground, self.readerConfig.goldModeNavBackground)
+        let navBackground = self.folioReader.isNight(self.readerConfig.nightModeNavBackground, self.readerConfig.daysModeNavBackground)
         let tintColor = self.readerConfig.tintColor
-        let navText = self.folioReader.isNight(UIColor.white, UIColor.black, UIColor.black)
+        let navText = self.folioReader.isNight(UIColor.white, UIColor.black)
         let font = UIFont(name: "Avenir-Light", size: 17)!
         setTranslucentNavigation(false, color: navBackground, tintColor: tintColor, titleColor: navText, andFont: font)
     }
@@ -298,7 +298,7 @@ class FolioReaderQuoteShare: UIViewController {
     // MARK: Status Bar
 
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        return self.folioReader.isNight(.lightContent, .default, .default)
+        return self.folioReader.isNight(.lightContent, .default)
     }
 
     override var supportedInterfaceOrientations : UIInterfaceOrientationMask {

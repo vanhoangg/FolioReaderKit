@@ -82,7 +82,7 @@ open class FolioReaderContainer: UIViewController {
         // Register initial defaults
         self.folioReader.register(defaults: [
             kCurrentFontFamily: FolioReaderFont.andada.rawValue,
-            kReadMode: 0,
+            kNightMode: false,
             kCurrentFontSize: 2,
             kCurrentAudioRate: 1,
             kCurrentHighlightStyle: 0,
@@ -206,7 +206,7 @@ open class FolioReaderContainer: UIViewController {
     }
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
-        return self.folioReader.isNight(.lightContent, .default , .default)
+        return self.folioReader.isNight(.lightContent, .default)
     }
 }
 

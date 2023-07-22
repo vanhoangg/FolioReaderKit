@@ -69,10 +69,10 @@ public enum HighlightStyle: Int {
     /**
      Return CSS class for HighlightStyle.
      */
-    public static func colorForStyle(_ style: Int, readMode: Int = 0) -> UIColor {
+    public static func colorForStyle(_ style: Int, nightMode: Bool = false) -> UIColor {
         let enumStyle = (HighlightStyle(rawValue: style) ?? HighlightStyle())
         let colors = enumStyle.colorComponents()
-        return UIColor(red: colors.red/255, green: colors.green/255, blue: colors.blue/255, alpha: (readMode == 1 ? colors.alpha : 1))
+        return UIColor(red: colors.red/255, green: colors.green/255, blue: colors.blue/255, alpha: (nightMode ? colors.alpha : 1))
     }
 }
 
