@@ -41,6 +41,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
 
     /// The index of the current page. Note: The index start at 1!
     open var pageNumber: Int!
+    open var totalPages:Int!
     open var webView: FolioReaderWebView?
 
     fileprivate var colorView: UIView!
@@ -90,7 +91,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
 
         if colorView == nil {
             colorView = UIView()
-            colorView.backgroundColor = self.readerConfig.nightModeBackground
+            colorView.backgroundColor = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
             webView?.scrollView.addSubview(colorView)
         }
 
@@ -102,6 +103,16 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         tapGestureRecognizer.numberOfTapsRequired = 1
         tapGestureRecognizer.delegate = self
         webView?.addGestureRecognizer(tapGestureRecognizer)
+        
+//        UIWebView *webView = [UIWebView new];
+//
+//        UIGestureRecognizer *webPan;
+//        for (UIGestureRecognizer *pan in webView.scrollView.gestureRecognizers) {
+//                webPan = pan;
+//            if ([webPan isKindOfClass:[UIPanGestureRecognizer class]]) {
+//                webPan = nil;
+//            }
+//        }
         
         let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
@@ -122,6 +133,9 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     }
     
     func swipeLeft() {
+        if pageNumber == totalPages {
+            return
+        }
         let animation:CATransition = CATransition()
         animation.delegate = self
         animation.type = CATransitionType.reveal
@@ -132,6 +146,9 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     }
     
     func swipeRight() {
+        if pageNumber == 1 {
+            return
+        }
         let animation:CATransition = CATransition()
         animation.delegate = self
         animation.type = CATransitionType.reveal
@@ -235,6 +252,10 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
 
         // Add the custom class based onClick listener
         self.setupClassBasedOnClickListeners()
+        
+        
+        let javascriptString = "document.body.setAttribute('ondragstart','return false')"
+        webView.stringByEvaluatingJavaScript(from: javascriptString)
 
         refreshPageMode()
 
@@ -546,17 +567,11 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     // MARK: ColorView fix for horizontal layout
     @objc func refreshPageMode() {
         guard let webView = webView else { return }
-
-        if (self.folioReader.nightMode == true) {
-            // omit create webView and colorView
-            let script = "document.documentElement.offsetHeight"
-            let contentHeight = webView.stringByEvaluatingJavaScript(from: script)
-            let frameHeight = webView.frame.height
-            let lastPageHeight = frameHeight * CGFloat(webView.pageCount) - CGFloat(Double(contentHeight!)!)
-            colorView.frame = CGRect(x: webView.frame.width * CGFloat(webView.pageCount-1), y: webView.frame.height - lastPageHeight, width: webView.frame.width, height: lastPageHeight)
-        } else {
-            colorView.frame = CGRect.zero
-        }
+        let script = "document.documentElement.offsetHeight"
+        let contentHeight = webView.stringByEvaluatingJavaScript(from: script)
+        let frameHeight = webView.frame.height
+        let lastPageHeight = frameHeight * CGFloat(webView.pageCount) - CGFloat(Double(contentHeight!)!)
+        colorView.frame = CGRect(x: webView.frame.width * CGFloat(webView.pageCount-1), y: webView.frame.height - lastPageHeight, width: webView.frame.width, height: lastPageHeight)
     }
     
     // MARK: - Class based click listener
@@ -578,3 +593,4 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         return webView?.js(javaScriptCode)
     }
 }
+

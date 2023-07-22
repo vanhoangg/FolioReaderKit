@@ -448,6 +448,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
 
         cell.setup(withReaderContainer: readerContainer)
         cell.pageNumber = indexPath.row+1
+        cell.totalPages = totalPages
         cell.webView?.scrollView.delegate = self
         if #available(iOS 11.0, *) {
             cell.webView?.scrollView.contentInsetAdjustmentBehavior = .never
@@ -485,17 +486,18 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         if folioReader.nightMode {
             classes += " nightMode"
         }
+        else {
+            classes += " goldMode"
+        }
 
         // Font Size
         classes += " \(folioReader.currentFontSize.cssIdentifier)"
-
         html = html.replacingOccurrences(of: "<html ", with: "<html class=\"\(classes)\"")
 
         // Let the delegate adjust the html string
         if let modifiedHtmlContent = self.delegate?.htmlContentForPage?(cell, htmlContent: html) {
             html = modifiedHtmlContent
         }
-
         cell.loadHTMLString(html, baseURL: URL(fileURLWithPath: resource.fullHref.deletingLastPathComponent))
         return cell
     }
@@ -1505,4 +1507,13 @@ extension FolioReaderCenter: FolioReaderChapterListDelegate {
         return bounds
     }
     
+}
+extension CustomStringConvertible {
+    var inspect: String {
+        if self is String {
+            return "\"\(self)\""
+        } else {
+            return self.description
+        }
+    }
 }

@@ -214,6 +214,21 @@ html.goldMode, html.goldMode body {
     background-color: #f2e2c9 !important;
 }
 
+.goldMode p, .goldMode div, .goldMode span:not(.epub-media-overlay-playing) {
+    color: #767676 !important;
+    background-color: transparent !important;
+}
+
+.goldMode h1, .goldMode h2, .goldMode h3, .goldMode h4, .goldMode h5, .goldMode h6 {
+    color: #848484 !important;
+}
+
+html.goldMode .highlight-yellow {background:rgba(255, 235, 107, 0.9)}
+html.goldMode .highlight-green {background:rgba(192, 237, 114, 0.9)}
+html.goldMode .highlight-blue {background:rgba(173, 216, 255, 0.9)}
+html.goldMode .highlight-pink {background:rgba(255, 176, 202, 0.9)}
+html.goldMode .highlight-underline {border-bottom: 2px solid rgba(240, 40, 20, 0.6)}
+
 html.nightMode, html.nightMode body {
     background-color: #131313 !important;
 }
