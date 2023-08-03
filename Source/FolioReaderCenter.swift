@@ -1099,7 +1099,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
             html += "<b>\(bookTitle)</b><br />"
             html += self.readerConfig.localizedShareBy+" <i>\(authorName)</i><br />"
 
-            if let bookShareLink = readerConfig.localizedShareWebLink {
+            if let bookShareLink = self.readerConfig.localizedShareWebLink {
                 html += "<a href=\"\(bookShareLink.absoluteString)\">\(bookShareLink.absoluteString)</a>"
                 shareItems.append(bookShareLink as AnyObject)
             }

@@ -34,11 +34,13 @@ footer, header, hgroup, menu, nav, section {
 html {
     -webkit-text-size-adjust: none; /* Never autoresize text */
     padding: 0 0 !important;
+    background-color: #f2e2c9 !important;
     overflow: hidden;
 }
 
 body {
     padding: 40px 20px !important;
+    background-color: #f2e2c9 !important;
     overflow: hidden !important;
 }
 
@@ -199,7 +201,7 @@ html .highlight-yellow, html .highlight-green, html .highlight-blue, html .highl
  */
 
 html, body {
-    -webkit-transition: all 0.6s ease;
+/*    -webkit-transition: all 0.6s ease;*/
 }
 
 html {
