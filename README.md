@@ -7,6 +7,7 @@ FolioReaderKit is an ePub reader and parser framework for iOS written in Swift.
 
 ## Features
 
+- [x] This fork is using WKWebView
 - [x] ePub 2 and ePub 3 support
 - [x] Custom Fonts
 - [x] Custom Text Size

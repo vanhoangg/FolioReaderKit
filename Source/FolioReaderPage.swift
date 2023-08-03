@@ -9,6 +9,7 @@
 import UIKit
 import SafariServices
 import MenuItemKit
+import WebKit
 
 /// Protocol which is used from `FolioReaderPage`s.
 @objc public protocol FolioReaderPageDelegate: class {
@@ -35,7 +36,7 @@ import MenuItemKit
     @objc optional func pageTap(_ recognizer: UITapGestureRecognizer)
 }
 
-open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecognizerDelegate, CAAnimationDelegate {
+open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestureRecognizerDelegate, CAAnimationDelegate {
     weak var delegate: FolioReaderPageDelegate?
     weak var readerContainer: FolioReaderContainer?
 
@@ -87,7 +88,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
             webView?.backgroundColor = .clear
             self.contentView.addSubview(webView!)
         }
-        webView?.delegate = self
+        webView?.navigationDelegate = self
 
         if colorView == nil {
             colorView = UIView()
@@ -164,7 +165,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
 
     deinit {
         webView?.scrollView.delegate = nil
-        webView?.delegate = nil
+        webView?.navigationDelegate = nil
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -199,7 +200,10 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         let tempHtmlContent = htmlContentWithInsertHighlights(htmlContent)
         // Load the html into the webview
         webView?.alpha = 0
-        webView?.loadHTMLString(tempHtmlContent, baseURL: baseURL)
+        let headerString = "<meta name=\"viewport\" content=\"initial-scale=1.0\" />"
+        let documentDirUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        webView?.loadFileURL(baseURL, allowingReadAccessTo: documentDirUrl)
+        webView?.loadHTMLString(headerString + tempHtmlContent, baseURL: baseURL)
     }
 
     // MARK: - Highlights
@@ -241,9 +245,17 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         return tempHtmlContent as String
     }
 
-    // MARK: - UIWebView Delegate
+    // MARK: - WKNavigation Delegate
+    
+    open func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+            guard let webView = webView as? FolioReaderWebView else {
+                return
+            }
 
-    open func webViewDidFinishLoad(_ webView: UIWebView) {
+            delegate?.pageWillLoad?(self)
+        }
+
+    open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         guard let webView = webView as? FolioReaderWebView else {
             return
         }
@@ -254,9 +266,6 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         self.setupClassBasedOnClickListeners()
         
         
-        let javascriptString = "document.body.setAttribute('ondragstart','return false')"
-        webView.stringByEvaluatingJavaScript(from: javascriptString)
-
         refreshPageMode()
 
         if self.readerConfig.enableTTS && !self.book.hasAudio {
@@ -280,10 +289,21 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
             self.webView?.createMenu(options: false)
         })
 
-        delegate?.pageDidLoad?(self)
+        webView.js("document.readyState") { _ in
+            self.delegate?.pageDidLoad?(self)
+        }
+        let overlayColor = readerConfig.mediaOverlayColor!
+        let colors = "\"\(overlayColor.hexString(false))\", \"\(overlayColor.highlightColor().hexString(false))\""
+        webView.js("setMediaOverlayStyleColors(\(colors))")
     }
+    
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+                let handledAction = handlePolicy(for: navigationAction)
+                let policy: WKNavigationActionPolicy = handledAction ? .allow : .cancel
+                decisionHandler(policy)
+            }
 
-    open func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
+    private func handlePolicy(for navigationAction: WKNavigationAction) -> Bool {
         guard
             let webView = webView as? FolioReaderWebView,
             let scheme = request.url?.scheme else {
@@ -357,7 +377,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         } else if scheme == "mailto" {
             print("Email")
             return true
-        } else if url.absoluteString != "about:blank" && scheme.contains("http") && navigationType == .linkClicked {
+        } else if url.absoluteString != "about:blank" && scheme.contains("http") && navigationAction.navigationType == .linkActivated {
             let safariVC = SFSafariViewController(url: request.url!)
             safariVC.view.tintColor = self.readerConfig.tintColor
             safariVC.modalPresentationStyle = .fullScreen
@@ -434,8 +454,19 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         if let _navigationController = self.folioReader.readerCenter?.navigationController, (_navigationController.isNavigationBarHidden == true) {
             let selected = webView?.js("getSelectedText()")
             
-            guard (selected == nil || selected?.isEmpty == true) else {
-                return
+            webView?.js("getSelectedText()") { selected in
+                guard (selected == nil || selected?.isEmpty == true) else {
+                    return
+                }
+            
+                let delay = 0.4 * Double(NSEC_PER_SEC) // 0.4 seconds * nanoseconds per seconds
+                let dispatchTime = (DispatchTime.now() + (Double(Int64(delay)) / Double(NSEC_PER_SEC)))
+
+                DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
+                    if (self.shouldShowBar == true && self.menuIsVisible == false) {
+                        self.folioReader.readerCenter?.toggleBars()
+                    }
+                })
             }
 
             let delay = 0.4 * Double(NSEC_PER_SEC) // 0.4 seconds * nanoseconds per seconds
@@ -492,19 +523,18 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
      */
     open func handleAnchor(_ anchor: String,  avoidBeginningAnchors: Bool, animated: Bool) {
         if !anchor.isEmpty {
-            let offset = getAnchorOffset(anchor)
-
+            getAnchorOffset(anchor) { offset in
             switch self.readerConfig.scrollDirection {
             case .vertical, .defaultVertical:
-                let isBeginning = (offset < frame.forDirection(withConfiguration: self.readerConfig) * 0.5)
+                let isBeginning = (offset < self.frame.forDirection(withConfiguration: self.readerConfig) * 0.5)
 
                 if !avoidBeginningAnchors {
-                    scrollPageToOffset(offset, animated: animated)
+                    self.scrollPageToOffset(offset, animated: animated)
                 } else if avoidBeginningAnchors && !isBeginning {
-                    scrollPageToOffset(offset, animated: animated)
+                    self.scrollPageToOffset(offset, animated: animated)
                 }
             case .horizontal, .horizontalWithVerticalContent:
-                scrollPageToOffset(offset, animated: animated)
+                self.scrollPageToOffset(offset, animated: animated)
             }
         }
     }
@@ -553,11 +583,13 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
         }
 
         if !webView.isShare && !webView.isColors {
-            if let result = webView.js("getSelectedText()") , result.components(separatedBy: " ").count == 1 {
+            webView.js("getSelectedText()") { result in
+                guard let result = result, result.components(separatedBy: " ").count == 1 else {
+                    webView.isOneWord = false
+                    return
+                }
                 webView.isOneWord = true
                 webView.createMenu(options: false)
-            } else {
-                webView.isOneWord = false
             }
         }
 
@@ -567,20 +599,21 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
     // MARK: ColorView fix for horizontal layout
     @objc func refreshPageMode() {
         guard let webView = webView else { return }
-        let script = "document.documentElement.offsetHeight"
-        let contentHeight = webView.stringByEvaluatingJavaScript(from: script)
-        let frameHeight = webView.frame.height
-        let lastPageHeight = frameHeight * CGFloat(webView.pageCount) - CGFloat(Double(contentHeight!)!)
-        colorView.backgroundColor = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
-        colorView.frame = CGRect(x: webView.frame.width * CGFloat(webView.pageCount-1), y: webView.frame.height - lastPageHeight, width: webView.frame.width, height: lastPageHeight)
+        colorView.frame = CGRect.zero
+//        let script = "document.documentElement.offsetHeight"
+//        let contentHeight = webView.stringByEvaluatingJavaScript(from: script)
+//        let frameHeight = webView.frame.height
+//        let lastPageHeight = frameHeight * CGFloat(webView.pageCount) - CGFloat(Double(contentHeight!)!)
+//        colorView.backgroundColor = self.folioReader.isNight(self.readerConfig.nightModeBackground, self.readerConfig.dayModeBackground)
+//        colorView.frame = CGRect(x: webView.frame.width * CGFloat(webView.pageCount-1), y: webView.frame.height - lastPageHeight, width: webView.frame.width, height: lastPageHeight)
     }
     
     // MARK: - Class based click listener
     
     fileprivate func setupClassBasedOnClickListeners() {
         for listener in self.readerConfig.classBasedOnClickListeners {
-            self.webView?.js("addClassBasedOnClickListener(\"\(listener.schemeName)\", \"\(listener.querySelector)\", \"\(listener.attributeName)\", \"\(listener.selectAll)\")");
-        }
+                    self.webView?.js("addClassBasedOnClickListener(\"\(listener.schemeName)\", \"\(listener.querySelector)\", \"\(listener.attributeName)\", \"\(listener.selectAll)\")")
+                }
     }
     
     // MARK: - Public Java Script injection
@@ -590,8 +623,8 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
      
      - returns: The result of running the JavaScript script passed in the script parameter, or nil if the script fails.
      */
-    open func performJavaScript(_ javaScriptCode: String) -> String? {
-        return webView?.js(javaScriptCode)
-    }
+//    open func performJavaScript(_ javaScriptCode: String) -> String? {
+//        return webView?.js(javaScriptCode)
+//    }
 }
 
