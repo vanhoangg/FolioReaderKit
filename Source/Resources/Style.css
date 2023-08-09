@@ -43,6 +43,20 @@ body {
     background-color: #f2e2c9 !important;
     overflow: hidden !important;
 }
+a:link {
+     color: deepskyblue;
+     background-color: transparent;
+     text-decoration: none;
+}
+a:visited {
+     color: deepskyblue;
+     background-color: transparent;
+     text-decoration: none;
+}
+a:active {
+     color: deepskyblue;
+     background-color: transparent;
+}
 
 * {
     page-break-before: initial !important; /* Reset page breaks to default */
