@@ -134,7 +134,7 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
         animation.delegate = self
         animation.type = CATransitionType.reveal
         animation.subtype = CATransitionSubtype.fromRight
-        animation.duration = 1.0
+        animation.duration = 0.5
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         webView?.layer.add(animation, forKey: kCATransition)
     }
@@ -147,7 +147,7 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
         animation.delegate = self
         animation.type = CATransitionType.reveal
         animation.subtype = CATransitionSubtype.fromLeft
-        animation.duration = 1.0
+        animation.duration = 0.5
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         webView?.layer.add(animation, forKey: kCATransition)
     }
