@@ -288,6 +288,16 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
         let overlayColor = readerConfig.mediaOverlayColor!
         let colors = "\"\(overlayColor.hexString(false))\", \"\(overlayColor.highlightColor().hexString(false))\""
         webView.js("setMediaOverlayStyleColors(\(colors))")
+        
+        if BookUtils.shared.path != nil {
+            if fileManager.fileExists(atPath: BookUtils.shared.path) {
+                try fileManager.removeItem(atPath: BookUtils.shared.path)
+                BookUtils.shared.path = nil
+            }
+            else {
+                print("File does not exist")
+            }
+        }
     }
     
     open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
