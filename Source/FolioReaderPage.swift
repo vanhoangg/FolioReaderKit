@@ -290,15 +290,15 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
         webView.js("setMediaOverlayStyleColors(\(colors))")
         
         if BookUtils.shared.path != nil {
-//            if FileManager.default.fileExists(atPath: BookUtils.shared.path!) {
-//                do {
-//                    try FileManager.default.removeItem(atPath: BookUtils.shared.path!)
-//                    BookUtils.shared.path = nil
-//                }catch {}
-//            }
-//            else {
-//                print("File does not exist")
-//            }
+            if FileManager.default.fileExists(atPath: BookUtils.shared.path!) {
+                do {
+                    try FileManager.default.removeItem(atPath: BookUtils.shared.path!)
+                    BookUtils.shared.path = nil
+                }catch {}
+            }
+            else {
+                print("File does not exist")
+            }
         }
     }
     
