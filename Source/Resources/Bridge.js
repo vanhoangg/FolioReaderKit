@@ -31,6 +31,11 @@ function getHTML() {
     return document.documentElement.outerHTML;
 }
 
+
+function jumpToSearchId() {
+    document.getElementById('search').scrollIntoView();
+}
+
 // Class manipulation
 function hasClass(ele,cls) {
   return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));

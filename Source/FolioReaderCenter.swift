@@ -266,6 +266,8 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         let closeIcon = UIImage(readerImageNamed: "icon-navbar-close")?.ignoreSystemTint(withConfiguration: self.readerConfig)
         let tocIcon = UIImage(readerImageNamed: "icon-navbar-toc")?.ignoreSystemTint(withConfiguration: self.readerConfig)
         let fontIcon = UIImage(readerImageNamed: "icon-navbar-font")?.ignoreSystemTint(withConfiguration: self.readerConfig)
+        let searchIcon = UIImage(readerImageNamed: "icon-navbar-search")?.ignoreSystemTint(withConfiguration: self.readerConfig)
+        
         let space = 70 as CGFloat
 
         let menu = UIBarButtonItem(image: closeIcon, style: .plain, target: self, action:#selector(closeReader(_:)))
@@ -282,6 +284,8 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         if self.book.hasAudio || self.readerConfig.enableTTS {
             rightBarIcons.append(UIBarButtonItem(image: audioIcon, style: .plain, target: self, action:#selector(presentPlayerMenu(_:))))
         }
+        
+        rightBarIcons.append(UIBarButtonItem(image: searchIcon, style: .plain, target: self, action:#selector(searchContent(_:))))
 
         let font = UIBarButtonItem(image: fontIcon, style: .plain, target: self, action: #selector(presentFontsMenu))
         font.width = space
@@ -1355,6 +1359,22 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         menu.transitioningDelegate = animator
         self.present(menu, animated: true, completion: nil)
     }
+    
+    /**
+     Search menu
+     */
+    @objc func searchContent(_ sender: UIBarButtonItem) {
+        
+        let searchView = FolioReaderSearchView(readerConfig: readerConfig, folioReader: folioReader, book: book)
+        searchView.book = book
+        let nav = UINavigationController(rootViewController: searchView)
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            nav.modalPresentationStyle = .formSheet
+        }
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
+    }
 
     /**
      Present audio player menu
@@ -1461,17 +1481,19 @@ extension FolioReaderCenter: FolioReaderPageDelegate {
 extension FolioReaderCenter: FolioReaderChapterListDelegate {
     
     func chapterList(_ chapterList: FolioReaderChapterList, didSelectRowAtIndexPath indexPath: IndexPath, withTocReference reference: FRTocReference) {
-        let item = findPageByResource(reference)
-        
-        if item < totalPages {
-            let indexPath = IndexPath(row: item, section: 0)
-            changePageWith(indexPath: indexPath, animated: false, completion: { () -> Void in
-                self.updateCurrentPage()
-            })
-            tempReference = reference
-        } else {
-            print("Failed to load book because the requested resource is missing.")
-        }
+        folioReader.readerContainer?.loadBook(completion: {
+            let item = self.findPageByResource(reference)
+            
+            if item < self.totalPages {
+                let indexPath = IndexPath(row: item, section: 0)
+                self.changePageWith(indexPath: indexPath, animated: false, completion: { () -> Void in
+                    self.updateCurrentPage()
+                })
+                self.tempReference = reference
+            } else {
+                print("Failed to load book because the requested resource is missing.")
+            }
+        })
     }
     
     func chapterList(didDismissedChapterList chapterList: FolioReaderChapterList) {

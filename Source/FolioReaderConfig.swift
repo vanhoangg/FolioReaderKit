@@ -227,6 +227,8 @@ open class FolioReaderConfig: NSObject {
     open var localizedShareTextQuote = NSLocalizedString("Chia sẻ trích dẫn chữ", comment: "")
     open var localizedSave = NSLocalizedString("Lưu", comment: "")
     open var localizedHighlightNote = NSLocalizedString("Ghi chú", comment: "")
+    open var localizedSearch = NSLocalizedString("Tìm", comment: "")
+    open var localizedSearchContent = NSLocalizedString("Tìm kiếm nội dung", comment: "")
 
     public convenience init(withIdentifier identifier: String) {
         self.init()

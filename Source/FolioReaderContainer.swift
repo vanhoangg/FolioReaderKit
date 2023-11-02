@@ -25,6 +25,8 @@ open class FolioReaderContainer: UIViewController {
     
     public var readerConfig: FolioReaderConfig
     public var folioReader: FolioReader
+    
+    var parsedBook: FRBook?
 
     fileprivate var errorOnLoad = false
 
@@ -155,13 +157,17 @@ open class FolioReaderContainer: UIViewController {
             return
         }
 
+        self.loadBook()
+    }
+    
+    func loadBook(completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async {
-
             do {
-                let parsedBook = try FREpubParser().readEpub(epubPath: self.epubPath, removeEpub: self.shouldRemoveEpub, unzipPath: self.unzipPath)
-                self.book = parsedBook
+                if self.parsedBook == nil {
+                    self.parsedBook = try FREpubParser().readEpub(epubPath: self.epubPath, removeEpub: self.shouldRemoveEpub, unzipPath: self.unzipPath)
+                }
+                self.book = self.parsedBook!.copy() as! FRBook
                 self.folioReader.isReaderOpen = true
-
                 // Reload data
                 DispatchQueue.main.async {
                     // Add audio player if needed
@@ -171,10 +177,12 @@ open class FolioReaderContainer: UIViewController {
                     self.centerViewController?.reloadData()
                     self.folioReader.isReaderReady = true
                     self.folioReader.delegate?.folioReader?(self.folioReader, didFinishedLoading: self.book)
+                    completion?()
                 }
             } catch {
                 self.errorOnLoad = true
                 self.alert(message: error.localizedDescription)
+                completion?()
             }
         }
     }
