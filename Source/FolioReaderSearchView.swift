@@ -64,10 +64,9 @@ class FolioReaderSearchView: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var bodyHtmls = (self.data[indexPath.row].fullHref as NSString)
         let adjustedRange = self.data[indexPath.row].range
-        let searchTagId = "search"  //青色
-        let tag = "<search id=\"\(searchTagId)\">\(self.data[indexPath.row].content)</search>"
-        let myRange = NSRange(location: adjustedRange.location, length: tag.count)
-        bodyHtmls = bodyHtmls.replacingCharacters(in: adjustedRange, with: tag) as NSString
+        let searchTagId = "search"//青色
+        let tag = "<span id=\"\(searchTagId)\" style=\"position: relative;\"></span>\(self.data[indexPath.row].html)"
+        bodyHtmls = bodyHtmls.replacingOccurrences(of: self.data[indexPath.row].html, with: tag) as NSString
         let resource = self.data[indexPath.row].resource
         openSearchFromPage(bodyHtmls: bodyHtmls, resource: resource,page: self.data[indexPath.row].page)
     }
@@ -80,6 +79,9 @@ class FolioReaderSearchView: UIViewController, UITableViewDelegate, UITableViewD
             self.folioReader.readerCenter?.currentPage?.webView?.loadHTMLString(html! as String, baseURL: NSURL(fileURLWithPath: (resource.fullHref as NSString).deletingLastPathComponent) as URL)
             self.dismiss {
                 self.folioReader.readerCenter?.currentPage?.webView?.js("jumpToSearchId(\("search"))")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    self.folioReader.readerCenter?.updateCurrentPage()
+                })
             }
         }
     }
@@ -230,18 +232,6 @@ extension FolioReaderSearchView {
                                         firstIndex = i+1
                                         break innerLoop
                                     }
-                                    else if html[i] == "n" {
-                                        if html[i+1] == "\\" {
-                                            firstIndex = i+2
-                                            break innerLoop
-                                        }
-                                    }
-                                    else if html[i] == ">" {
-                                        if html[i+1] == "\\" && html[i+2] == "r" && html[i+3] == "b"{
-                                            lastIndex = i-1
-                                            break innerLoop
-                                        }
-                                    }
                                     else if i == 0 {
                                         firstIndex = i
                                         break innerLoop
@@ -261,12 +251,6 @@ extension FolioReaderSearchView {
                                         lastIndex = i
                                         break innerLoop
                                     }
-                                    else if html[i] == "\\" {
-                                        if html[i+1] == "n" {
-                                            lastIndex = i-1
-                                            break innerLoop
-                                        }
-                                    }
                                     else if html[i] == "<" {
                                         if html[i+1] == "b" && html[i+2] == "r"{
                                             lastIndex = i-1
@@ -279,19 +263,21 @@ extension FolioReaderSearchView {
                                     }
                                 }
                                 if firstIndex != nil && lastIndex != nil {
-                                    let string = html[firstIndex!..<(lastIndex!+1)]
+                                    let string = html[firstIndex!..<(lastIndex!+1)].trim()
                                     if string != "" {
-                                        let content = string.htmlToString.replacingOccurrences(of: "\n", with: "").trim()
-                                        let myRange = NSRange(location: firstIndex!, length: content.count)
-                                        let total = data.count
-                                        data.appendDistinct(contentsOf: [SearchData(content: content ,html: string ,href: value.resource.href, fullHref: html, range: myRange
-                                                                                    , resource: value.resource, page: j)], where: { (data1, data2) -> Bool in
-                                            return data1.content != data2.content
-                                        })
-                                        if total != data.count && data.count - lastAdded >= 10 {
-                                            lastAdded = data.count
-                                            self.tableView.hideActivityIndicator()
-                                            tableView.reloadData()
+                                        let content = string.htmlToString
+                                        if content != "" {
+                                            let myRange = NSRange(location: firstIndex!, length: content.count)
+                                            let total = data.count
+                                            data.appendDistinct(contentsOf: [SearchData(content: content ,html: string ,href: value.resource.href, fullHref: html, range: myRange
+                                                                                        , resource: value.resource, page: j)], where: { (data1, data2) -> Bool in
+                                                return data1.content != data2.content
+                                            })
+                                            if total != data.count && data.count - lastAdded >= 10 {
+                                                lastAdded = data.count
+                                                self.tableView.hideActivityIndicator()
+                                                tableView.reloadData()
+                                            }
                                         }
                                     }
                                 }
@@ -383,7 +369,7 @@ class CustomCell: UITableViewCell {
 
 extension String {
     func trim() -> String {
-        return self.trimmingCharacters(in: NSCharacterSet.whitespaces)
+        return self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
    }
 }
 

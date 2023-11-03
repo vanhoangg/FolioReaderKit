@@ -33,7 +33,7 @@ function getHTML() {
 
 
 function jumpToSearchId() {
-    document.getElementById('search').scrollIntoView();
+    document.getElementById('search').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // Class manipulation
