@@ -33,7 +33,25 @@ function getHTML() {
 
 
 function jumpToSearchId() {
-    document.getElementById('search').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('search').scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'start' });
+    var scrollTimeout;
+    var isScrolled = false;
+    addEventListener('scroll', function(e) {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function() {
+            if (isScrolled == false) {
+                window.scrollBy({
+                    top: 0,
+                    left: -10,
+                    behavior: "instant",
+                });
+                isScrolled = true;
+            }
+            else {
+                removeEventListener("scroll", myFunction);
+            }
+        }, 100);
+    });
 }
 
 // Class manipulation
