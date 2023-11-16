@@ -439,13 +439,13 @@ class RegExp {
     }
     
     func isMatch(input: String) -> Bool {
-        let matches = self.internalRegexp.matches( in: input, options: [], range:NSMakeRange(0, input.characters.count) )
+        let matches = self.internalRegexp.matches( in: input, options: [], range:NSMakeRange(0, input.count) )
         return matches.count > 0
     }
     
     func matches(input: String) -> [NSTextCheckingResult]? {
         if self.isMatch(input: input) {   //マッチがあるなら
-            let matches = self.internalRegexp.matches( in: input, options: [], range:NSMakeRange(0, input.characters.count) )
+            let matches = self.internalRegexp.matches( in: input, options: [], range:NSMakeRange(0, input.count) )
             return matches
         }
         return nil
